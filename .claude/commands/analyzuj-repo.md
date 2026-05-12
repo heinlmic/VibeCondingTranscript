@@ -7,47 +7,81 @@ Tento příkaz projde lokální repo kurzu a pro vybranou lekci vytvoří souhrn
 
 kde `$ARGUMENTS` je:
 - `<cesta> <číslo-lekce>` — zpracuje jen jednu lekci, např. `/home/michal/projects/Vibe-Coding-1 4`
-- `<cesta>` — zpracuje všechny lekce
+- `<cesta>` — zpracuje všechny lekce (paralelně přes subagenty)
 
-## Mapování číslo lekce → složka v repo
+## Detekce složek lekce
 
-| Číslo | Složka | Téma |
-|-------|--------|------|
-| 1 | `1_LLM/` | Základy LLM — API volání |
-| 2 | `2_Codex/` | Codex — tools, MCP, skills, hooks |
-| 3 | `3_Codex_SDK/typescript/` | Codex SDK (TypeScript) |
-| 4 | `4_Claude_Code/` | Claude Code — tools, MCP, skills, hooks |
-| 5 | `5_Claude_Agent_SDK/` | Claude Agent SDK (Python + TypeScript) |
-| 6 | `6_Others/` | Ostatní agenti (Copilot, Gemini CLI, Cursor) |
-| 7 | `7_Practical_Office_suite/` | Office suite — grafy, obrázky, videa, dokumenty |
-| 8 | `8_Practical_Code/` | Praktické kódování — spec-kit, Ralph Wiggum |
+Názvy složek v repo nejsou fixní — mohou mít libovolnou formu (`1_LLM/`, `1-llm-intro/`, `01_basics/` apod.).
 
-## Postup
+**Před každým zpracováním** spusť:
+```bash
+ls <REPO_PATH>/
+```
+a z výstupu identifikuj složky začínající číslicí. Číslo na začátku = číslo lekce. Ignoruj složky bez číselného prefixu (např. `scripts/`, `.git/`).
 
-1. Zkontroluj argumenty:
-   - Pokud je zadáno číslo lekce, zpracuj jen odpovídající složku z tabulky výše
-   - Pokud číslo není zadáno, zpracuj všechny složky ze tabulky
+Orientační témata podle čísla lekce (názvy složek se mohou lišit):
 
-2. Pro každou zpracovávanou složku lekce:
-   a. Přečti strom složek **do hloubky 3 úrovní** od složky lekce (ne od kořene repo)
-   b. Pro každý nalezený adresář (úrovně 1–3) přečti tyto soubory pokud existují:
-      - `README.md` — vždy čti
-      - `main.py` — vždy čti
-      - `AGENTS.md`, `SKILL.md` — vždy čti
-      - `*.ts`, `*.py` (ostatní) — čti jen pokud jsou to hlavní soubory projektu (ne utility v hlubokých podsložkách)
-      - `package.json` — přečti jen pole `name`, `description`, `scripts` (ne `dependencies`)
-   c. SKILL.md hledej **rekurzivně** do libovolné hloubky — mohou být zanořeny 10+ úrovní hluboko v plugin složkách
+| Číslo | Téma |
+|-------|------|
+| 1 | Základy LLM — API volání |
+| 2 | Codex — tools, MCP, skills, hooks |
+| 3 | Codex SDK (TypeScript) |
+| 4 | Claude Code — tools, MCP, skills, hooks |
+| 5 | Claude Agent SDK (Python + TypeScript) |
+| 6 | Ostatní agenti (Copilot, Gemini CLI, Cursor) |
+| 7 | Office suite — grafy, obrázky, videa, dokumenty |
+| 8 | Praktické kódování — spec-kit, Ralph Wiggum |
 
-3. Přeskoč tyto složky a soubory **zcela**:
-   - Složky: `node_modules/`, `.venv/`, `__pycache__/`, `.git/`, `dist/`, `build/`
-   - Soubory: `uv.lock`, `package-lock.json`, `tsconfig.json`, `*.lock`, `.gitignore`, `*.env`
-   - Pro `pyproject.toml` a `uv.lock`: jen zaznamenej že projekt používá uv/pip (nečti obsah)
+## Postup — jedna lekce
 
-4. Speciální chování pro konkrétní lekce:
-   - **Lekce 3 a 5** (`*_SDK`): mají podsložky `python/` a `typescript/` — procházej obě
-   - **Lekce 8** (`8_Practical_Code`): monorepo struktura (`apps/`, `packages/`) — uveď strukturu a top-level README, nečti všechny TS soubory do hloubky
+Pokud je zadáno číslo lekce, zpracuj ji přímo (bez subagenta):
 
-5. Pro každou zpracovávanou lekci vytvoř `repo-summary/lekce-XX-repo.md`
+1. Spusť `ls <REPO_PATH>/` a najdi složku s odpovídajícím číselným prefixem
+2. Přečti strom složek do hloubky 3 od složky lekce
+3. Pro každý adresář přečti: `README.md`, `main.py`, `AGENTS.md`, `SKILL.md` vždy; ostatní `.ts`/`.py` jen pokud jsou hlavní soubory projektu; z `package.json` jen `name`, `description`, `scripts`
+4. `SKILL.md` hledej rekurzivně do libovolné hloubky
+5. Přeskoč: `node_modules/`, `.venv/`, `__pycache__/`, `.git/`, `dist/`, `build/`, `*.lock`
+6. Zapiš výsledek do `repo-summary/lekce-XX-repo.md`
+
+## Postup — všechny lekce (subagenti)
+
+Pokud číslo lekce **není** zadáno, spusť pro každou lekci samostatný subagent paralelně.
+
+Nejdříve spusť `ls <REPO_PATH>/` a identifikuj všechny složky s číselným prefixem. Pro každou nalezenou složku spusť tento bash příkaz (všechny paralelně jako samostatné Bash tool cally):
+
+```bash
+claude --print --allowedTools "Read,Bash" \
+  "Analyze the repository folder at <REPO_PATH>/<FOLDER> for lesson <N>.
+
+Read the folder tree to depth 3. For each directory read: README.md, main.py, AGENTS.md, SKILL.md always; other .ts/.py only if they are the main project files; from package.json only name/description/scripts fields. Search for SKILL.md recursively at any depth. Skip: node_modules/, .venv/, __pycache__/, .git/, dist/, build/, *.lock files.
+
+Special rules:
+- Lessons 3 and 5 (SDK): process both python/ and typescript/ subfolders
+- Lesson 8 (8_Practical_Code): monorepo — describe top-level structure, do not read all TS files deeply
+
+Return ONLY the content of the repo-summary file in this exact format (nothing else):
+
+# Lekce <N> — Repo summary: <FOLDER>
+
+## Přehled
+What this part of the repository contains and demonstrates.
+
+## Struktura složky
+Overview of subfolders and their purpose.
+
+## Klíčové soubory
+- \`path/file.py\` — what it demonstrates, main concept
+
+## Koncepty demonstrované v kódu
+- list of concepts shown (structured output, MCP, subagents...)
+
+## Poznámky
+Anything interesting worth noting (unusual approaches, differences from other lessons...)"
+```
+
+Po dokončení všech subagentů:
+- Zapiš výstup každého subagenta do `repo-summary/lekce-XX-repo.md`
+- Subagenti vrátí pouze obsah souboru — žádné jiné výstupy neočekávej
 
 ## Formát repo-summary souboru
 
@@ -73,4 +107,5 @@ Cokoli zajímavého co stojí za zmínku (neobvyklé přístupy, rozdíly oproti
 
 ## Na konci vypiš
 - Seznam vytvořených repo-summary souborů
+- Zda byly použity subagenti (ano při zpracování všech lekcí)
 - Případné složky které nebyly jasné nebo neměly README

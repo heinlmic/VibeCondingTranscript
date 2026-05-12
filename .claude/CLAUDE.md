@@ -43,19 +43,19 @@ Nikdy nečti repo přímo při zpracování lekce — vždy použij již vygener
 
 ## Mapa repo → lekce
 
-| Složka v repo | Lekce | Téma |
-|---------------|-------|------|
-| `1_LLM/` | Lekce 1 | Základy LLM — API volání (OpenAI, Anthropic, Ollama, HuggingFace, Gemini, Grok, LiteLLM...) |
-| `2_Codex/` | Lekce 2 | Codex manuálně — tools, MCP, skills, subagents, hooks, plugins, marketplace |
-| `3_Codex_SDK/typescript/` | Lekce 3 | Codex SDK (TypeScript) — single thread, multi-thread, workflows, patterns |
-| `4_Claude_Code/` | Lekce 4 | Claude Code — tools, MCP, skills, subagents, hooks, plugins, marketplace |
-| `5_Claude_Agent_SDK/` | Lekce 5 | Claude Agent SDK (Python + TypeScript) — single agent, multi-agent, workflows |
-| `6_Others/` | Lekce 6 | Ostatní agenti — Copilot CLI+SDK, Gemini CLI, Cursor, OpenCode |
-| `7_Practical_Office_suite/` | Lekce 7 | Office suite — grafy, obrázky, videa, TTS, PPTX, DOCX, XLSX, Google Workspace |
-| `8_Practical_Code/` | Lekce 8 | Praktické kódování — spec-kit, Ralph Wiggum pattern |
-| `100_Others/` | — | Infrastructure — Langfuse (observability), LiteLLM (proxy) |
+Složky v repo jsou detekovány automaticky podle číselného prefixu — názvy se mohou lišit (`1_LLM/`, `1-llm-intro/` apod.). Číslo na začátku = číslo lekce.
 
-Poznámka: `1_LLM/99_providers/` obsahuje inference servery (Ollama, LM Studio, llama-server, vLLM, SGLang, RunPod, Vast.ai) — relevantní pro více lekcí.
+| Prefix | Lekce | Téma |
+|--------|-------|------|
+| `1_*/` | Lekce 1 | Základy LLM — API volání (OpenAI, Anthropic, Ollama, HuggingFace, Gemini, Grok, LiteLLM...) |
+| `2_*/` | Lekce 2 | Codex manuálně — tools, MCP, skills, subagents, hooks, plugins, marketplace |
+| `3_*/` | Lekce 3 | Codex SDK (TypeScript) — single thread, multi-thread, workflows, patterns |
+| `4_*/` | Lekce 4 | Claude Code — tools, MCP, skills, subagents, hooks, plugins, marketplace |
+| `5_*/` | Lekce 5 | Claude Agent SDK (Python + TypeScript) — single agent, multi-agent, workflows |
+| `6_*/` | Lekce 6 | Ostatní agenti — Copilot CLI+SDK, Gemini CLI, Cursor, OpenCode |
+| `7_*/` | Lekce 7 | Office suite — grafy, obrázky, videa, TTS, PPTX, DOCX, XLSX, Google Workspace |
+| `8_*/` | Lekce 8 | Praktické kódování — spec-kit, Ralph Wiggum pattern |
+| `100_*/` | — | Infrastructure — Langfuse (observability), LiteLLM (proxy) |
 
 ---
 
@@ -92,6 +92,26 @@ Pokud prezentace existuje, uveď v hlavičce summary: `Prezentace: ano`.
 
 ### Repo summary
 Předgenerovaný popis složky odpovídající lekci. Obsahuje: popis souborů, klíčové funkce, struktura, na co se zaměřit. Vždy použij místo přímého čtení repo.
+
+### MCP — fetch server
+Projekt využívá MCP server `fetch` (`uvx mcp-server-fetch`) pro načítání URL obsahu.
+
+Kdy použít `fetch` MCP tool:
+- Při generování `output/all-tools.md` — pro každý nástroj načti jeho URL a doplň popis
+- Při zpracování Discord zpráv — pokud `links[]` obsahují GitHub repa nebo dokumentaci, načti tituly/README
+- Při nejasném termínu v transcriptu — ověř na webu, zda nástroj existuje a co dělá
+
+Použití: `mcp__fetch__fetch` s parametrem `url`.
+
+### Subagenti — `/analyzuj-repo`
+Při zpracování všech lekcí najednou (`/analyzuj-repo <cesta>` bez čísla lekce) spouští hlavní agent
+subagenty paralelně — jeden na lekci — přes `claude --print --allowedTools "Read,Bash"`.
+
+Počet subagentů závisí na tom, kolik složek s číselným prefixem command v repo nalezne.
+Každý subagent dostane cestu ke složce lekce a vrátí obsah repo-summary souboru.
+Hlavní agent výstupy zapíše do `repo-summary/lekce-XX-repo.md`.
+
+Při zpracování jedné konkrétní lekce se subagent nespouští.
 
 ---
 

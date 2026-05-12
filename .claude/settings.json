@@ -8,5 +8,11 @@
       "Bash(python3 scripts/fetch_discord.py)",
       "Bash(python3 scripts/assign_discord.py *)"
     ]
+  },
+  "mcpServers": {
+    "fetch": {
+      "command": "uvx",
+      "args": ["mcp-server-fetch"]
+    }
   }
 }

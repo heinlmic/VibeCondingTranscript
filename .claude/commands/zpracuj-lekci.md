@@ -51,6 +51,7 @@ Nejasnosti označuj `[???]` s odkazem na review soubor.
 ## Krok 5 — Aktualizace all-tools.md
 
 Přidej nové nástroje ze všech zdrojů do `output/all-tools.md`.
+Pro každý nový nástroj s URL použij MCP `fetch` tool (`mcp__fetch__fetch`) k načtení stránky a doplnění stručného popisu z oficiálního zdroje.
 
 ## Na konci vypiš
 - Které zdroje byly použity (transcript / repo-summary / discord kanály)

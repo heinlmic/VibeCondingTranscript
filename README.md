@@ -80,18 +80,33 @@ Příklad:
 
 Výstup se uloží do `repo-summary/lekce-XX-repo.md` pro každou lekci zvlášť.
 
-### Mapa složek → lekce
+**Pojmenování složek v repo je flexibilní** — složky mohou být pojmenované libovolně (`1_LLM/`, `1-llm-intro/`, `01_basics/` apod.). Claude je detekuje automaticky podle číselného prefixu — stačí zadat pouze cestu k repo.
 
-| Složka v repo | Lekce |
-|---------------|-------|
-| `1_LLM/` | Lekce 1 — Základy LLM, API |
-| `2_Codex/` | Lekce 2 — Codex manuálně |
-| `3_Codex_SDK/typescript/` | Lekce 3 — Codex SDK |
-| `4_Claude_Code/` | Lekce 4 — Claude Code |
-| `5_Claude_Agent_SDK/` | Lekce 5 — Claude Agent SDK |
-| `6_Others/` | Lekce 6 — Ostatní agenti |
-| `7_Practical_Office_suite/` | Lekce 7 — Office suite |
-| `8_Practical_Code/` | Lekce 8 — Praktické kódování |
+Chceš zpracovat jen jednu konkrétní lekci:
+
+```
+/analyzuj-repo /absolutni/cesta/k/repo-kurzu 4
+```
+
+### Jak zpracování funguje
+
+- **Jedna lekce** — Claude najde složku s odpovídajícím číselným prefixem a zpracuje ji přímo.
+- **Všechny lekce** — Claude spustí pro každou složku samostatný subagent paralelně (`claude --print`), čímž výrazně zkrátí dobu zpracování.
+
+### Mapa čísel → lekce
+
+Složky v repo jsou detekovány automaticky podle číselného prefixu. Orientační témata:
+
+| Číslo | Lekce |
+|-------|-------|
+| 1 | Základy LLM, API |
+| 2 | Codex manuálně |
+| 3 | Codex SDK |
+| 4 | Claude Code |
+| 5 | Claude Agent SDK |
+| 6 | Ostatní agenti |
+| 7 | Office suite |
+| 8 | Praktické kódování |
 
 ---
 
