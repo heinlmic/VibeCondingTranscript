@@ -1,7 +1,7 @@
 # Discord Assign
 
 Přiřadí Discord zprávy z API exportu k lekcím.
-Vstup: `discord_channel/export/*.json` (výstup `scripts/fetch_discord.py`)
+Vstup: `discord-channel/export/*.json` (výstup `scripts/fetch_discord.py`)
 Výstup: `discord-parsed/lekce-XX-{channel}.json`
 
 ## Kdy použít
@@ -10,7 +10,7 @@ Po `scripts/fetch_discord.py`, před zpracováním lekce — nebo jako součást
 ## Spuštění
 
 ```bash
-python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+python scripts/assign_discord.py discord-channel/export lekce-datumy.json
 ```
 
 ## Vstupní formát (API JSON z fetch_discord.py)

@@ -119,7 +119,7 @@ Výstup je plain text se slide tituly — Claude ho pak použije při analýze.
 
 ### 5a. Nastavení kanálů
 
-Uprav `discord_channel/channels.json` — seznam kanálů ke stažení:
+Uprav `discord-channel/channels.json` — seznam kanálů ke stažení:
 
 ```json
 [
@@ -144,12 +144,12 @@ Channel ID najdeš v Discordu: pravý klik na kanál → **Copy Channel ID** (nu
 uv run python scripts/fetch_discord.py
 ```
 
-Výstup: `discord_channel/export/{channel-name}.json`
+Výstup: `discord-channel/export/{channel-name}.json`
 
 ### 5c. Přiřazení zpráv k lekcím
 
 ```bash
-uv run python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+uv run python scripts/assign_discord.py discord-channel/export lekce-datumy.json
 ```
 
 Výstup: `discord-parsed/lekce-XX-{channel}.json`
@@ -247,7 +247,7 @@ VibeCondingTranscript/
 │   └── parse_presentation.py    # PPTX → plain text
 ├── transcripts/                  # Zoom JSON exporty (gitignorováno)
 ├── presentations/                # PDF/PPTX/HTML prezentace (gitignorováno)
-├── discord_channel/
+├── discord-channel/
 │   ├── channels.json             # Seznam kanálů ke stažení
 │   └── export/                   # Stažená data (gitignorováno)
 ├── discord-parsed/               # Zprávy přiřazené k lekcím

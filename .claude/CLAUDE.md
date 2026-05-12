@@ -22,7 +22,7 @@ VibeCondingTranscript/
 │   ├── lekce-01.pdf        # .pdf čte Claude nativně
 │   ├── lekce-02.pptx       # .pptx → spusť parse_presentation.py
 │   └── lekce-03.html       # .html čte Claude jako text
-├── discord_channel/        # Discord konfigurace + stažená data
+├── discord-channel/        # Discord konfigurace + stažená data
 │   ├── channels.json       # seznam kanálů ke stažení
 │   └── export/             # výstup fetch_discord.py (gitignorovaný)
 ├── discord-parsed/         # výstup assign_discord.py, per lekce
@@ -71,7 +71,7 @@ Poznámka: `1_LLM/99_providers/` obsahuje inference servery (Ollama, LM Studio, 
 Formát časových značek: `[MM:SS]` nebo `[H:MM:SS]` pro lekce delší než hodinu.
 
 ### Discord (API)
-Data stahuje `scripts/fetch_discord.py` z Discord API a ukládá do `discord_channel/export/{channel}.json`.
+Data stahuje `scripts/fetch_discord.py` z Discord API a ukládá do `discord-channel/export/{channel}.json`.
 
 Formát: `{ "meta": { channel_name, exported_at, ... }, "messages": [{ id, timestamp, author, content, links, embeds? }] }`
 
@@ -100,10 +100,10 @@ Předgenerovaný popis složky odpovídající lekci. Obsahuje: popis souborů, 
 ```bash
 # 1. Stáhni zprávy (potřeba DISCORD_TOKEN v env)
 uv run python scripts/fetch_discord.py
-# → discord_channel/export/{channel}.json
+# → discord-channel/export/{channel}.json
 
 # 2. Rozpadni do lekcí
-uv run python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+uv run python scripts/assign_discord.py discord-channel/export lekce-datumy.json
 # → discord-parsed/lekce-XX-{channel}.json
 ```
 

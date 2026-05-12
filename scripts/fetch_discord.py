@@ -1,7 +1,7 @@
 """
 Discord Channel Fetcher.
-Načte DISCORD_TOKEN z env/.env, kanály z discord_channel/channels.json,
-stáhne všechny zprávy a uloží do discord_channel/export/{channel}.json.
+Načte DISCORD_TOKEN z env/.env, kanály z discord-channel/channels.json,
+stáhne všechny zprávy a uloží do discord-channel/export/{channel}.json.
 
 Setup:
   export DISCORD_TOKEN="tvuj_token"
@@ -21,8 +21,8 @@ import requests
 load_dotenv()
 
 PROJECT_ROOT  = Path(__file__).parent.parent
-CHANNELS_FILE = PROJECT_ROOT / "discord_channel" / "channels.json"
-OUTPUT_DIR    = PROJECT_ROOT / "discord_channel" / "export"
+CHANNELS_FILE = PROJECT_ROOT / "discord-channel" / "channels.json"
+OUTPUT_DIR    = PROJECT_ROOT / "discord-channel" / "export"
 
 TOKEN = os.environ.get("DISCORD_TOKEN")
 if not TOKEN:

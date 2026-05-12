@@ -1,6 +1,7 @@
 # --- Projektová data (nezveřejňovat) ---
 transcripts/*.json
-discord_channel/export/*.json
+discord-channel/export/*.json
+discord-parsed/
 repo-summary/
 output/
 presentations/

@@ -13,7 +13,7 @@ Token je uložen v `.env` v kořeni projektu:
 DISCORD_TOKEN=...
 ```
 
-Skripty načítají `.env` automaticky přes `python-dotenv`. Kanály jsou nakonfigurované v `discord_channel/channels.json`.
+Skripty načítají `.env` automaticky přes `python-dotenv`. Kanály jsou nakonfigurované v `discord-channel/channels.json`.
 
 ## Postup
 
@@ -23,12 +23,12 @@ Skripty načítají `.env` automaticky přes `python-dotenv`. Kanály jsou nakon
 python scripts/fetch_discord.py
 ```
 
-Výstup: `discord_channel/export/{channel}.json` pro každý kanál.
+Výstup: `discord-channel/export/{channel}.json` pro každý kanál.
 
 ### 2. Rozpadni podle lekcí
 
 ```bash
-python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+python scripts/assign_discord.py discord-channel/export lekce-datumy.json
 ```
 
 Výstup: `discord-parsed/lekce-XX-{channel}.json`
