@@ -64,7 +64,7 @@ Poznámka: `1_LLM/99_providers/` obsahuje inference servery (Ollama, LM Studio, 
 ### Transcript
 | Formát | Zdroj | Jak zpracovat |
 |--------|-------|---------------|
-| `.json` | Zoom recording | `python scripts/parse_transcript.py transcripts/lekce-XX.json` |
+| `.json` | Zoom recording | `uv run python scripts/parse_transcript.py transcripts/lekce-XX.json` |
 | `.srt` / `.vtt` | Video platformy | Standardní formát, přesné časy |
 | `.txt` | Ruční export | Odhadni časy, označuj `[~odhad]` |
 
@@ -86,7 +86,7 @@ Soubory v `presentations/lekce-XX.*` — slouží **pouze při analýze** (detek
 |--------|----------|
 | `.pdf` | Claude čte nativně přes Read tool |
 | `.html` | Claude čte jako text přes Read tool |
-| `.pptx` | Spusť `python scripts/parse_presentation.py presentations/lekce-XX.pptx` → plain text se slide tituly |
+| `.pptx` | Spusť `uv run python scripts/parse_presentation.py presentations/lekce-XX.pptx` → plain text se slide tituly |
 
 Pokud prezentace existuje, uveď v hlavičce summary: `Prezentace: ano`.
 
@@ -99,11 +99,11 @@ Předgenerovaný popis složky odpovídající lekci. Obsahuje: popis souborů, 
 
 ```bash
 # 1. Stáhni zprávy (potřeba DISCORD_TOKEN v env)
-python scripts/fetch_discord.py
+uv run python scripts/fetch_discord.py
 # → discord_channel/export/{channel}.json
 
 # 2. Rozpadni do lekcí
-python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+uv run python scripts/assign_discord.py discord_channel/export lekce-datumy.json
 # → discord-parsed/lekce-XX-{channel}.json
 ```
 
@@ -199,9 +199,10 @@ Signály pro novou kapitolu:
 
 ## Pravidla
 
+- Po každé změně (skripty, workflow, závislosti, struktura projektu) zkontroluj a aktualizuj všechny navazující soubory: `README.md`, `CLAUDE.md`, příslušné skills v `.claude/skills/`, slash commands v `.claude/commands/`. Nezanechávej dokumentaci v nekonzistentním stavu.
 - Nikdy nečti repo přímo — vždy používej `repo-summary/`
 - Nepřekládej anglické názvy nástrojů
 - Pokud lektor ukázal konkrétní kód — zahrň název souboru z repo
 - Zachovej češtinu v popisech, angličtinu v názvech nástrojů
 - Hlavní řečník v Zoom JSON = nejvíce položek; filtruj pro detekci kapitol
-- Python skripty spouštěj z kořene projektu (`python scripts/...`)
+- Python skripty spouštěj z kořene projektu přes `uv run python scripts/...`

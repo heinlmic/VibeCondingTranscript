@@ -1,12 +1,17 @@
 [
   {
     "id": "1491843481746804837",
-    "name": "hot-news",
+    "name": "zajimave-odkazy",
     "description": "Novinky a zajímavé odkazy"
   },
   {
-    "id": "1491809850240536828",
-    "name": "obecna-diskuze",
+    "id": "1489249071536541756",
+    "name": "dotazy-pri-lekci",
+    "description": ""
+  },
+  {
+    "id": "1489187675633356908",
+    "name": "chat-room",
     "description": ""
   }
 ]

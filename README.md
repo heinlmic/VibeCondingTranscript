@@ -19,8 +19,10 @@ Pro každou lekci se kombinují tři zdroje: **transcript** (Zoom), **repo** (k�
 
 ## 1. Požadavky a instalace
 
+Projekt používá [uv](https://docs.astral.sh/uv/) pro správu závislostí.
+
 ```bash
-pip install python-dotenv requests python-pptx
+uv sync
 ```
 
 Vytvoř soubor `.env` v kořeni projektu:
@@ -46,7 +48,7 @@ DISCORD_TOKEN=tvuj_discord_token
 ### Parsování transcriptu
 
 ```bash
-python scripts/parse_transcript.py transcripts/lekce-03.json
+uv run python scripts/parse_transcript.py transcripts/lekce-03.json
 ```
 
 Výstup jde na stdout — přesměruj ho nebo nech Claude číst přímo přes slash command.
@@ -106,7 +108,7 @@ Prezentace jsou volitelný analytický zdroj (detekce kapitol, oprava termínů)
 ### Parsování PPTX
 
 ```bash
-python scripts/parse_presentation.py presentations/lekce-03.pptx
+uv run python scripts/parse_presentation.py presentations/lekce-03.pptx
 ```
 
 Výstup je plain text se slide tituly — Claude ho pak použije při analýze.
@@ -139,7 +141,7 @@ Channel ID najdeš v Discordu: pravý klik na kanál → **Copy Channel ID** (nu
 ### 5b. Stažení zpráv z Discordu
 
 ```bash
-python scripts/fetch_discord.py
+uv run python scripts/fetch_discord.py
 ```
 
 Výstup: `discord_channel/export/{channel-name}.json`
@@ -147,7 +149,7 @@ Výstup: `discord_channel/export/{channel-name}.json`
 ### 5c. Přiřazení zpráv k lekcím
 
 ```bash
-python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+uv run python scripts/assign_discord.py discord_channel/export lekce-datumy.json
 ```
 
 Výstup: `discord-parsed/lekce-XX-{channel}.json`
