@@ -6,14 +6,23 @@ Pro každou lekci vznikají tři zdroje dat: transcript (co lektor říkal), rep
 
 ## Struktura projektu
 ```
-vibe-coding-course/
-├── CLAUDE.md
-├── .claude/commands/
-├── transcripts/          # Zoom JSON exporty
-├── discord/              # kopie Discord kanálů po lekcích
-├── repo-summary/         # generováno přes /analyzuj-repo — NEČÍST REPO PŘÍMO
+VibeCondingTranscript/
+├── .claude/
+│   ├── commands/           # slash commands
+│   └── skills/
+│       ├── zoom-transcript/SKILL.md
+│       └── discord-assign/SKILL.md
+├── scripts/                # spustitelné Python skripty
+│   ├── parse_transcript.py
+│   ├── fetch_discord.py
+│   └── assign_discord.py
+├── transcripts/            # Zoom JSON exporty (gitignorované)
+├── discord_channel/        # Discord konfigurace + stažená data
+│   ├── channels.json       # seznam kanálů ke stažení
+│   └── export/             # výstup fetch_discord.py (gitignorovaný)
+├── discord-parsed/         # výstup assign_discord.py, per lekce
+├── repo-summary/           # generováno přes /analyzuj-repo — NEČÍST REPO PŘÍMO
 │   ├── lekce-01-repo.md
-│   ├── lekce-02-repo.md
 │   └── ...
 └── output/
     ├── all-tools.md
@@ -49,22 +58,39 @@ Poznámka: `1_LLM/99_providers/` obsahuje inference servery (Ollama, LM Studio, 
 ### Transcript
 | Formát | Zdroj | Jak zpracovat |
 |--------|-------|---------------|
-| `.json` | Zoom recording | `result.transcriptList` → `{ts, text, username, end_ts}`; filtruj hlavního řečníka (nejvíce položek) |
+| `.json` | Zoom recording | `python scripts/parse_transcript.py transcripts/lekce-XX.json` |
 | `.srt` / `.vtt` | Video platformy | Standardní formát, přesné časy |
 | `.txt` | Ruční export | Odhadni časy, označuj `[~odhad]` |
 
 Formát časových značek: `[MM:SS]` nebo `[H:MM:SS]` pro lekce delší než hodinu.
 
-### Discord
-Čistý text kopírovaný z Discord kanálu. Obsahuje:
-- Číslo zprávy, jméno autora, datum/čas
-- Linky s náhledem (URL + název + popis)
-- Bez přímé vazby na lekce — přiřazení podle data nebo ručně pojmenovaný soubor
+### Discord (API)
+Data stahuje `scripts/fetch_discord.py` z Discord API a ukládá do `discord_channel/export/{channel}.json`.
 
-Při zpracování vytáhni: nástroje a linky zmíněné komunitou, zajímavé diskuse a tipy, otázky na lektora.
+Formát: `{ "meta": { channel_name, exported_at, ... }, "messages": [{ id, timestamp, author, content, links, embeds? }] }`
+
+`scripts/assign_discord.py` přiřadí zprávy do `discord-parsed/lekce-XX-{channel}.json`.
+
+Při zpracování lekce vytáhni z `discord-parsed/lekce-XX-*.json`: nástroje a linky zmíněné komunitou, zajímavé diskuse, otázky na lektora.
 
 ### Repo summary
 Předgenerovaný popis složky odpovídající lekci. Obsahuje: popis souborů, klíčové funkce, struktura, na co se zaměřit. Vždy použij místo přímého čtení repo.
+
+---
+
+## Discord workflow
+
+```bash
+# 1. Stáhni zprávy (potřeba DISCORD_TOKEN v env)
+python scripts/fetch_discord.py
+# → discord_channel/export/{channel}.json
+
+# 2. Rozpadni do lekcí
+python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+# → discord-parsed/lekce-XX-{channel}.json
+```
+
+Nebo použij `/rozpadni-discord` pro celý postup.
 
 ---
 
@@ -161,3 +187,4 @@ Klíčové soubory relevantní k této lekci s krátkým popisem co demonstrují
 - Pokud lektor ukázal konkrétní kód — zahrň název souboru z repo
 - Zachovej češtinu v popisech, angličtinu v názvech nástrojů
 - Hlavní řečník v Zoom JSON = nejvíce položek; filtruj pro detekci kapitol
+- Python skripty spouštěj z kořene projektu (`python scripts/...`)

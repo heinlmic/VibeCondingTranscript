@@ -1,39 +1,40 @@
 # Rozpadni Discord kanály do lekcí
 
-Tento příkaz se spouští JEDNOU (nebo při přidání nového Discord souboru).
-Projde všechny soubory v `discord/`, každý zparsuje a rozpadne do lekcí.
-Výsledky uloží do `discord-parsed/` jako jednotlivé JSON soubory.
+Stáhne Discord kanály přes API a rozpadne zprávy do lekcí.
+Spouštěj při prvním nastavení nebo po přidání nových zpráv.
 
 ## Použití
 `/rozpadni-discord`
 
-## Postup
+## Prerekvizity
 
-1. Přečti skills:
-   - `.claude/skills/discord-parser/SKILL.md` → ulož `/tmp/parse_discord.py`
-   - `.claude/skills/discord-assign/SKILL.md` → ulož `/tmp/assign_discord.py`
-
-2. Přečti `lekce-datumy.json`
-
-3. Pro každý `.txt` soubor v `discord/`:
-
+Nastav token před spuštěním:
 ```bash
-python /tmp/parse_discord.py discord/<soubor>.txt > /tmp/discord_raw.json
-python /tmp/assign_discord.py /tmp/discord_raw.json <soubor>.txt lekce-datumy.json > /tmp/discord_assigned.json
+export DISCORD_TOKEN="tvuj_token"
 ```
 
-4. Z výsledku rozbal každou lekci do samostatného souboru:
-   - `discord-parsed/lekce-01-<název-kanálu>.json`
-   - `discord-parsed/lekce-02-<název-kanálu>.json`
-   - atd.
+Kanály jsou nakonfigurované v `discord_channel/channels.json`.
 
-   Název kanálu = název souboru bez přípony a bez čísla lekce pokud bylo v názvu.
-   Příklad: `zajimavosti.txt` → `lekce-01-zajimavosti.json`, `lekce-02-zajimavosti.json`...
-   Příklad: `lekce03-chat.txt` → pouze `lekce-03-chat.json`
+## Postup
 
-5. Vytvoř `discord-parsed/README.md` s přehledem co bylo vygenerováno.
+### 1. Stáhni zprávy z Discord API
+
+```bash
+python scripts/fetch_discord.py
+```
+
+Výstup: `discord_channel/export/{channel}.json` pro každý kanál.
+
+### 2. Rozpadni podle lekcí
+
+```bash
+python scripts/assign_discord.py discord_channel/export lekce-datumy.json
+```
+
+Výstup: `discord-parsed/lekce-XX-{channel}.json`
 
 ## Na konci vypiš
-- Seznam zpracovaných Discord souborů
+
+- Seznam zpracovaných kanálů
 - Počet zpráv celkem a rozpad po lekcích
-- Soubory kde nebyla žádná zpráva pro danou lekci (přeskočeny)
+- Kanály/lekce bez zpráv (přeskočeny)

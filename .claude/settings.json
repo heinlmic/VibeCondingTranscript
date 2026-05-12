@@ -1,0 +1,12 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python scripts/parse_transcript.py *)",
+      "Bash(python scripts/fetch_discord.py)",
+      "Bash(python scripts/assign_discord.py *)",
+      "Bash(python3 scripts/parse_transcript.py *)",
+      "Bash(python3 scripts/fetch_discord.py)",
+      "Bash(python3 scripts/assign_discord.py *)"
+    ]
+  }
+}

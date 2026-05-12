@@ -1,8 +1,8 @@
 # --- Projektová data (nezveřejňovat) ---
-transcripts/
+transcripts/*.json
+discord_channel/export/*.json
 repo-summary/
 output/
-discord/
 
 # --- Python / tooling ---
 # Byte-compiled / optimized / DLL files

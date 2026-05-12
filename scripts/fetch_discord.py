@@ -1,16 +1,11 @@
 """
-Discord Channel Fetcher
-=======================
-Načte token z env (DISCORD_TOKEN), kanály z config/channels.json,
-stáhne všechny zprávy a uloží jako odlehčené JSON soubory.
+Discord Channel Fetcher.
+Načte DISCORD_TOKEN z env/.env, kanály z discord_channel/channels.json,
+stáhne všechny zprávy a uloží do discord_channel/export/{channel}.json.
 
 Setup:
-  export DISCORD_TOKEN="tvuj_token"     # Linux/Mac
-  set DISCORD_TOKEN=tvuj_token          # Windows CMD
-  $env:DISCORD_TOKEN="tvuj_token"       # PowerShell
-
-  pip install requests python-dotenv
-  python discord_fetch.py
+  export DISCORD_TOKEN="tvuj_token"
+  python scripts/fetch_discord.py
 """
 
 import json
@@ -20,17 +15,15 @@ import time
 from datetime import datetime, timezone
 from pathlib import Path
 
-import requests
 from dotenv import load_dotenv
+import requests
 
 load_dotenv()
 
-# ── cesty ────────────────────────────────────────────────────
-BASE_DIR      = Path(__file__).parent
-CHANNELS_FILE = BASE_DIR / "config" / "channels.json"
-OUTPUT_DIR    = BASE_DIR / "discord_export"
+PROJECT_ROOT  = Path(__file__).parent.parent
+CHANNELS_FILE = PROJECT_ROOT / "discord_channel" / "channels.json"
+OUTPUT_DIR    = PROJECT_ROOT / "discord_channel" / "export"
 
-# ── token ────────────────────────────────────────────────────
 TOKEN = os.environ.get("DISCORD_TOKEN")
 if not TOKEN:
     raise SystemExit("✗ DISCORD_TOKEN není nastaven (env nebo .env soubor)")
@@ -45,8 +38,6 @@ HEADERS = {
 URL_RE = re.compile(r"https?://\S+")
 
 
-# ── parsování ─────────────────────────────────────────────────
-
 def parse_message(raw: dict) -> dict:
     author  = raw.get("author", {})
     content = raw.get("content", "")
@@ -54,12 +45,11 @@ def parse_message(raw: dict) -> dict:
     embeds = []
     for e in raw.get("embeds", []):
         embed: dict = {}
-        if e.get("title"):       embed["title"]       = e["title"]
-        if e.get("description"): embed["description"] = e["description"]
-        if e.get("url"):         embed["url"]         = e["url"]
-        if e.get("type"):        embed["type"]        = e["type"]   # article/video/rich/link
-        if e.get("author", {}).get("name"):
-            embed["author"] = e["author"]["name"]
+        if e.get("title"):                  embed["title"]       = e["title"]
+        if e.get("description"):            embed["description"] = e["description"]
+        if e.get("url"):                    embed["url"]         = e["url"]
+        if e.get("type"):                   embed["type"]        = e["type"]
+        if e.get("author", {}).get("name"): embed["author"]      = e["author"]["name"]
         if embed:
             embeds.append(embed)
 
@@ -81,8 +71,6 @@ def parse_message(raw: dict) -> dict:
 
     return msg
 
-
-# ── fetch ────────────────────────────────────────────────────
 
 def fetch_raw(channel_id: str) -> list[dict]:
     messages: list[dict] = []
@@ -124,8 +112,6 @@ def fetch_raw(channel_id: str) -> list[dict]:
     return messages
 
 
-# ── export ───────────────────────────────────────────────────
-
 def export_channel(channel: dict) -> None:
     cid  = channel["id"]
     name = channel["name"]
@@ -148,15 +134,13 @@ def export_channel(channel: dict) -> None:
             "oldest_message": min(timestamps),
             "newest_message": max(timestamps),
         },
-        "messages": list(reversed(parsed)),  # chronologicky od nejstarší
+        "messages": list(reversed(parsed)),
     }
 
     out = OUTPUT_DIR / f"{name}.json"
     out.write_text(json.dumps(output, ensure_ascii=False, indent=2), encoding="utf-8")
     print(f"  ✓ {len(parsed)} zpráv → {out.name}\n")
 
-
-# ── main ─────────────────────────────────────────────────────
 
 def main() -> None:
     OUTPUT_DIR.mkdir(exist_ok=True)
