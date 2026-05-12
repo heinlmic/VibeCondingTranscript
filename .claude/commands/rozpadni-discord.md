@@ -8,12 +8,12 @@ Spouštěj při prvním nastavení nebo po přidání nových zpráv.
 
 ## Prerekvizity
 
-Nastav token před spuštěním:
-```bash
-export DISCORD_TOKEN="tvuj_token"
+Token je uložen v `.env` v kořeni projektu:
+```
+DISCORD_TOKEN=...
 ```
 
-Kanály jsou nakonfigurované v `discord_channel/channels.json`.
+Skripty načítají `.env` automaticky přes `python-dotenv`. Kanály jsou nakonfigurované v `discord_channel/channels.json`.
 
 ## Postup
 
