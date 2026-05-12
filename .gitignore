@@ -1,3 +1,10 @@
+# --- Projektová data (nezveřejňovat) ---
+transcripts/
+repo-summary/
+output/
+discord/
+
+# --- Python / tooling ---
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[codz]
