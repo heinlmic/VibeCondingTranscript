@@ -3,6 +3,7 @@ transcripts/*.json
 discord_channel/export/*.json
 repo-summary/
 output/
+presentations/
 
 # --- Python / tooling ---
 # Byte-compiled / optimized / DLL files

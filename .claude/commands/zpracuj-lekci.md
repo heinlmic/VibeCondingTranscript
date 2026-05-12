@@ -4,6 +4,19 @@
 `/zpracuj-lekci $ARGUMENTS`
 kde `$ARGUMENTS` je název souboru v `transcripts/`, např. `lekce-03.json`
 
+## Krok 0 — Prezentace (volitelná analytická pomůcka)
+
+Hledej `presentations/lekce-XX.*` (kde XX odpovídá číslu lekce z `$ARGUMENTS`):
+- `.pdf` nebo `.html` — načti přímo přes Read tool
+- `.pptx` — spusť `python scripts/parse_presentation.py presentations/lekce-XX.pptx` a načti výstup
+
+Pokud soubor existuje, načti jej **před Průchodem 1** a použij pro:
+- přesnější detekci kapitol (slide tituly = přirozené předěly)
+- opravování garblovaných termínů (správná anglická slova jsou ve slidech)
+- kontext nejasných pasáží
+
+Pokud prezentace neexistuje, pokračuj bez ní.
+
 ## Krok 1 — Načtení transcriptu
 
 Pro `.json` soubory použij skill `zoom-transcript`:
@@ -29,8 +42,9 @@ Vytvoř `output/summaries/[název-bez-přípony]-review-nejasnosti.md`:
 
 Vytvoř `output/summaries/[název-bez-přípony]-summary.md` kombinací zdrojů:
 - **Transcript** → shrnutí, kapitoly s časy, tipy lektora
-- **repo-summary** → sekce "Kód z repozitáře" s názvy souborů
+- **repo-summary** → sekce "Relevantní soubory v repo": max 2–3 soubory s jednořádkovým popisem, jen pokud jsou extra relevantní; pokud není co zdůraznit, sekci vynech
 - **Discord** → sekce "Z Discordu — [název kanálu]" pro každý kanál zvlášť
+- **Hlavička**: uveď `Prezentace: ano` pokud byl soubor v `presentations/` dostupný, jinak `Prezentace: ne`
 
 Nejasnosti označuj `[???]` s odkazem na review soubor.
 

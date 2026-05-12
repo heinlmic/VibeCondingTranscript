@@ -15,8 +15,13 @@ VibeCondingTranscript/
 ├── scripts/                # spustitelné Python skripty
 │   ├── parse_transcript.py
 │   ├── fetch_discord.py
-│   └── assign_discord.py
+│   ├── assign_discord.py
+│   └── parse_presentation.py
 ├── transcripts/            # Zoom JSON exporty (gitignorované)
+├── presentations/          # Prezentace k lekcím (gitignorované) — jen jako analytická pomůcka
+│   ├── lekce-01.pdf        # .pdf čte Claude nativně
+│   ├── lekce-02.pptx       # .pptx → spusť parse_presentation.py
+│   └── lekce-03.html       # .html čte Claude jako text
 ├── discord_channel/        # Discord konfigurace + stažená data
 │   ├── channels.json       # seznam kanálů ke stažení
 │   └── export/             # výstup fetch_discord.py (gitignorovaný)
@@ -26,6 +31,7 @@ VibeCondingTranscript/
 │   └── ...
 └── output/
     ├── all-tools.md
+    ├── index.md
     └── summaries/
         ├── lekce-03-review-nejasnosti.md
         └── lekce-03-summary.md
@@ -72,6 +78,17 @@ Formát: `{ "meta": { channel_name, exported_at, ... }, "messages": [{ id, times
 `scripts/assign_discord.py` přiřadí zprávy do `discord-parsed/lekce-XX-{channel}.json`.
 
 Při zpracování lekce vytáhni z `discord-parsed/lekce-XX-*.json`: nástroje a linky zmíněné komunitou, zajímavé diskuse, otázky na lektora.
+
+### Prezentace (volitelný analytický zdroj)
+Soubory v `presentations/lekce-XX.*` — slouží **pouze při analýze** (detekce kapitol, oprava garblovaných termínů, kontext nejasností). V summary se neobjeví jako samostatná sekce.
+
+| Formát | Jak číst |
+|--------|----------|
+| `.pdf` | Claude čte nativně přes Read tool |
+| `.html` | Claude čte jako text přes Read tool |
+| `.pptx` | Spusť `python scripts/parse_presentation.py presentations/lekce-XX.pptx` → plain text se slide tituly |
+
+Pokud prezentace existuje, uveď v hlavičce summary: `Prezentace: ano`.
 
 ### Repo summary
 Předgenerovaný popis složky odpovídající lekci. Obsahuje: popis souborů, klíčové funkce, struktura, na co se zaměřit. Vždy použij místo přímého čtení repo.
@@ -156,7 +173,7 @@ Signály pro novou kapitolu:
 ```
 # Lekce XX — [Název]
 
-> Datum: | Délka: | Repo: [složka v repo]
+> Datum: | Délka: | Repo: [složka v repo] | Prezentace: ano/ne
 
 ## Shrnutí
 2-4 věty.
@@ -165,8 +182,8 @@ Signály pro novou kapitolu:
 | Čas | Kapitola | Popis |
 |-----|----------|-------|
 
-## Kód z repozitáře
-Klíčové soubory relevantní k této lekci s krátkým popisem co demonstrují.
+## Relevantní soubory v repo
+- `cesta/k/souboru.py` — jednořádkový popis (max 2–3 položky, jen extra relevantní; pokud není co zdůraznit, sekci vynech)
 
 ## Nástroje a repa
 - **Nástroj** — popis
