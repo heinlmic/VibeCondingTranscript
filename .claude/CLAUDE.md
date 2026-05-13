@@ -16,8 +16,10 @@ VibeCondingTranscript/
 │   ├── parse_transcript.py
 │   ├── fetch_discord.py
 │   ├── assign_discord.py
-│   └── parse_presentation.py
+│   ├── parse_presentation.py
+│   └── check_lekce.py      # pre-check souborů před zpracováním
 ├── transcripts/            # Zoom JSON exporty (gitignorované)
+│   └── parsed/             # cachované čisté přepisy (gitignorované)
 ├── presentations/          # Prezentace k lekcím (gitignorované) — jen jako analytická pomůcka
 │   ├── lekce-01.pdf        # .pdf čte Claude nativně
 │   ├── lekce-02.pptx       # .pptx → spusť parse_presentation.py
@@ -145,37 +147,9 @@ Pokud uživatel nedoplnil nejasnosti, použij `[???]`.
 
 ---
 
-## Slovník garblovaných vzorů (Zoom auto-transcript CZ)
+## Slovník garblovaných vzorů
 
-Vzor: `Initial*initial` nebo `Langenglish*` = zkomolenina anglické zkratky
-
-| Přepis | Správně |
-|--------|---------|
-| `initialsdkinitial`, `sdkáčko`, `sdékáčko` | SDK |
-| `initialmcpinitial`, `mcpíčko` | MCP |
-| `initialideinitial`, `initialvsinitial` | IDE / VS Code |
-| `initialmpminitial`, `initialmpinitial` | npm |
-| `initialclainitiallangenglish` | CLI |
-| `initialgptinitiallangenglish` | GPT |
-| `Initiallm` | LLM |
-| `initialmdiniitial` | .md (markdown) |
-| `initialcdiniitial` | cd (terminálový příkaz) |
-
-Fonetické přepisy:
-
-| Přepis | Správně |
-|--------|---------|
-| `lenggraf`, `langgraf` | LangGraph |
-| `lengčejn` | LangChain |
-| `klod`, `kloud kód` | Claude / Claude Code |
-| `kopajtot`, `kopajlot`, `kopilot` | Copilot |
-| `ralph wigum`, `ralf liggum` | Ralph Wiggum (pattern/projekt v `8_Practical_Code/`) |
-| `džejson` | JSON |
-| `gethab`, `gid hub` | GitHub |
-| `tůl`, `tuli` | tool/tools |
-| `skil`, `skilly` | skill/skills |
-| `patern`, `paterny` | pattern/patterns |
-| `tred`, `tredy` | thread/threads |
+Viz `.claude/glossary.md` — načti při Průchodu 1 (identifikace nejasností).
 
 ---
 
@@ -188,32 +162,9 @@ Signály pro novou kapitolu:
 
 ---
 
-## Output formát — lekce-XX-summary.md
+## Output formát
 
-```
-# Lekce XX — [Název]
-
-> Datum: | Délka: | Repo: [složka v repo] | Prezentace: ano/ne
-
-## Shrnutí
-2-4 věty.
-
-## Kapitoly
-| Čas | Kapitola | Popis |
-|-----|----------|-------|
-
-## Relevantní soubory v repo
-- `cesta/k/souboru.py` — jednořádkový popis (max 2–3 položky, jen extra relevantní; pokud není co zdůraznit, sekci vynech)
-
-## Nástroje a repa
-- **Nástroj** — popis
-
-## Z Discordu — tipy komunity
-- zajímavé linky, otázky, diskuse
-
-## Klíčové poznatky a tipy lektora
-- konkrétní doporučení
-```
+Viz `.claude/output-format.md` — načti při Průchodu 2 (finální summary).
 
 ---
 

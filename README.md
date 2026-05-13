@@ -14,6 +14,7 @@ Pro každou lekci se kombinují tři zdroje: **transcript** (Zoom), **repo** (k�
 6. [Zpracování lekce — kompletní postup](#6-zpracování-lekce--kompletní-postup)
 7. [Slash commands přehled](#7-slash-commands-přehled)
 8. [Struktura projektu](#8-struktura-projektu)
+9. [Pre-check souborů](#9-pre-check-souborů)
 
 ---
 
@@ -52,6 +53,8 @@ uv run python scripts/parse_transcript.py transcripts/lekce-03.json
 ```
 
 Výstup jde na stdout — přesměruj ho nebo nech Claude číst přímo přes slash command.
+
+Parsovaný výstup se automaticky cachuje do `transcripts/parsed/lekce-XX.txt` — při opakovaném spuštění `/zpracuj-lekci` se znovu neparsuje.
 
 Skript automaticky:
 - rozpozná hlavního řečníka
@@ -197,6 +200,11 @@ Soubor `lekce-datumy.json` obsahuje datum konání každé lekce:
 | `discord-parsed/lekce-XX-*.json` | Doporučeno |
 | `presentations/lekce-XX.*` | Volitelné |
 
+> Nejsi si jistý, jestli máš všechny soubory? Spusť:
+> ```bash
+> uv run python scripts/check_lekce.py 5
+> ```
+
 ### Krok 1 — Zpracuj lekci (průchod 1: identifikace nejasností)
 
 ```
@@ -247,6 +255,12 @@ Výsledek: `output/summaries/lekce-03-summary.md`
 | `/vytvor-index` | Vygeneruje `output/index.md` přes všechny lekce |
 | `/rozpadni-discord` | Stáhne Discord a přiřadí zprávy k lekcím |
 
+### Pomocné skripty
+
+| Příkaz | Popis |
+|--------|-------|
+| `uv run python scripts/check_lekce.py [N]` | Ověří stav souborů pro lekci N (nebo všechny 1–8) |
+
 ---
 
 ## 8. Struktura projektu
@@ -259,8 +273,10 @@ VibeCondingTranscript/
 │   ├── parse_transcript.py       # Zoom JSON → čistý přepis
 │   ├── fetch_discord.py          # Stáhne zprávy z Discord API
 │   ├── assign_discord.py         # Přiřadí zprávy k lekcím
-│   └── parse_presentation.py    # PPTX → plain text
+│   ├── parse_presentation.py     # PPTX → plain text
+│   └── check_lekce.py            # Pre-check souborů před zpracováním
 ├── transcripts/                  # Zoom JSON exporty (gitignorováno)
+│   └── parsed/                   # Cachované čisté přepisy (gitignorováno)
 ├── presentations/                # PDF/PPTX/HTML prezentace (gitignorováno)
 ├── discord-channel/
 │   ├── channels.json             # Seznam kanálů ke stažení
@@ -275,4 +291,33 @@ VibeCondingTranscript/
     └── summaries/
         ├── lekce-03-review-nejasnosti.md
         └── lekce-03-summary.md
+```
+
+---
+
+## 9. Pre-check souborů
+
+Před spuštěním `/zpracuj-lekci` ověř, že jsou dostupné všechny potřebné soubory:
+
+```bash
+uv run python scripts/check_lekce.py 5
+```
+
+Výstup ukáže stav každého souboru:
+
+```
+Lekce 05 (2026-04-23):
+  transcripts/     ⚠  transcript5.json  → lekce-05.json [přejmenovat? y/N]
+  presentations/   ✗  nenalezeno
+  discord-parsed/  ✓  lekce-05-dotazy-pri-lekci.json (36 zpráv)
+  repo-summary/    ✓  lekce-05-repo.md
+  output/summary   ✓  lekce-05-summary.md (hotovo)
+```
+
+Skript nabídne přejmenování souborů s nesprávným názvem (např. `transcript5.json` → `lekce-05.json`).
+
+Bez argumentu zkontroluje všechny lekce 1–8:
+
+```bash
+uv run python scripts/check_lekce.py
 ```

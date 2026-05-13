@@ -25,7 +25,7 @@ def assign_by_dates(messages: list[dict], lesson_dates: dict[str, str]) -> dict[
 
     result: dict[str, list[dict]] = {}
     for msg in messages:
-        msg_date = date.fromisoformat(msg["date"])
+        msg_date = date.fromisoformat(msg["datetime"][:10])
         assigned = None
         for lesson_key, lesson_date in sorted_lessons:
             if msg_date >= lesson_date:
@@ -40,7 +40,6 @@ def normalize_message(msg: dict) -> dict:
     return {
         "author":   msg.get("author", "?"),
         "datetime": ts,
-        "date":     ts[:10] if ts else "",
         "text":     msg.get("content", ""),
         "links":    msg.get("links", []),
     }

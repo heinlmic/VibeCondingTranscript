@@ -9,7 +9,9 @@ kde `$ARGUMENTS` je číslo lekce, např. `3` nebo `03`
 Z `$ARGUMENTS` odvoď:
 - číslo lekce jako dvouciferné `XX` (např. `3` → `03`, `12` → `12`)
 - hledej v `transcripts/` soubor odpovídající vzoru `lekce-XX.*` (json/srt/vtt/txt)
-- pokud soubor neexistuje, vypiš dostupné soubory v `transcripts/` a skonči
+- pokud soubor neexistuje, navrhni `uv run python scripts/check_lekce.py XX` a skonči
+
+Zkontroluj, zda `output/summaries/lekce-XX-summary.md` existuje. Pokud ano, upozorni uživatele a čekej na potvrzení před přepsáním.
 
 ## Krok 1 — Prezentace (volitelná analytická pomůcka)
 
@@ -26,10 +28,10 @@ Pokud prezentace neexistuje, pokračuj bez ní.
 
 ## Krok 2 — Načtení transcriptu
 
-Pro `.json` soubory použij skill `zoom-transcript`:
-- Přečti `.claude/skills/zoom-transcript/SKILL.md`
-- Ulož Python kód do `/tmp/parse_transcript.py`
-- Spusť: `python /tmp/parse_transcript.py transcripts/lekce-XX.json > /tmp/transcript_clean.txt`
+Pro `.json` soubory:
+- Zkontroluj, zda existuje `transcripts/parsed/lekce-XX.txt`
+  - Pokud ano, načti přímo (cache)
+  - Pokud ne, spusť: `mkdir -p transcripts/parsed && uv run python scripts/parse_transcript.py transcripts/lekce-XX.json > transcripts/parsed/lekce-XX.txt` a načti výstup
 
 Pro `.srt` / `.vtt` / `.txt` čti přímo.
 
@@ -40,12 +42,25 @@ Pro `.srt` / `.vtt` / `.txt` čti přímo.
 
 ## Krok 4 — Průchod 1: Identifikace nejasností
 
+Načti `.claude/glossary.md` pro slovník garblovaných vzorů.
+
 Vytvoř `output/summaries/lekce-XX-review-nejasnosti.md`:
 1. Tabulka úspěšně rozpoznaných garblovaných termínů
-2. Pro každý nejasný termín: přesný čas + doslovný kontext + tip (hledej i v repo-summary)
+2. Pro každý nejasný termín detailní sekce v tomto formátu:
+   ```
+   ### N. „přepis" — Tip?
+   **Čas:** [MM:SS]
+   **Kontext:** `doslovný úryvek`
+   **Tip:** co to pravděpodobně je a proč
+   **Doplň:** *(správný název, URL nebo potvrzení tipu)*
+   **Priorita:** Vysoká / Střední / Nízká
+   ```
+   Pole `Doplň:` vždy přidej — uživatel ho vyplní před spuštěním `/dopln-nejasnosti`.
 3. Prioritizovaná tabulka: Vysoká / Střední / Nízká
 
 ## Krok 5 — Průchod 2: Summary
+
+Načti `.claude/output-format.md` pro formát summary.
 
 Vytvoř `output/summaries/lekce-XX-summary.md` kombinací zdrojů:
 - **Transcript** → shrnutí, kapitoly s časy, tipy lektora
