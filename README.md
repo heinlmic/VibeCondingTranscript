@@ -200,7 +200,7 @@ Soubor `lekce-datumy.json` obsahuje datum konání každé lekce:
 ### Krok 1 — Zpracuj lekci (průchod 1: identifikace nejasností)
 
 ```
-/zpracuj-lekci lekce-03.json
+/zpracuj-lekci 3
 ```
 
 Vytvoří `output/summaries/lekce-03-review-nejasnosti.md` s:
@@ -221,7 +221,7 @@ Projdi video na označených časech a doplň správné termíny nebo kontext.
 Nebo — pokud nechceš čekat na manuální doplnění:
 
 ```
-/zpracuj-lekci lekce-03.json
+/zpracuj-lekci 3
 ```
 
 a nejasnosti se doplní automaticky jako `[???]`.
@@ -241,7 +241,7 @@ Výsledek: `output/summaries/lekce-03-summary.md`
 | Příkaz | Popis |
 |--------|-------|
 | `/analyzuj-repo <cesta>` | Vygeneruje `repo-summary/` pro všechny lekce |
-| `/zpracuj-lekci <soubor>` | Průchod 1 — identifikace nejasností pro jednu lekci |
+| `/zpracuj-lekci <číslo>` | Průchod 1 — identifikace nejasností pro jednu lekci |
 | `/dopln-nejasnosti <lekce>` | Průchod 2 — finální summary po doplnění nejasností |
 | `/zpracuj-vse` | Zpracuje všechny dostupné transkripty |
 | `/vytvor-index` | Vygeneruje `output/index.md` přes všechny lekce |
